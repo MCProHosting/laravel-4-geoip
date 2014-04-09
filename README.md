@@ -1,4 +1,6 @@
-# GeoIP for Laravel 4 - Alpha
+# GeoIP for Laravel 4
+
+This repo contains some improvements to the original package, primarily on code conventions (PSR-2 style) and removing potentially hazardous behaviour. Unit testing will be added in the future, however that is not of immediate priority.
 
 [![Latest Stable Version](https://poser.pugx.org/torann/geoip/v/stable.png)](https://packagist.org/packages/torann/geoip) [![Total Downloads](https://poser.pugx.org/torann/geoip/downloads.png)](https://packagist.org/packages/torann/geoip)
 
