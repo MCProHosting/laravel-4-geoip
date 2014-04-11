@@ -25,6 +25,17 @@ class GeoIPTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetClientLocationWithNoCache() {
+    $locArray = array (
+    'ip' => '4.4.4.2',
+    'isoCode' => 'US',
+    'country' => 'United States',
+    'city' => null,
+    'state' => null,
+    'postal_code' => null,
+    'lat' => 38.0,
+    'lon' => -97.0
+    );
+
     $reader = m::mock('Torann\GeoIP\ReaderProvider');
     $reader->shouldReceive('make')->andReturn(new Reader('./database/maxmind/GeoLite2-City.mmdb'));
 
@@ -44,11 +55,11 @@ class GeoIPTest extends PHPUnit_Framework_TestCase {
     $g = new GeoIP($config, $mock, $reader); 	
     
     $this->assertFalse($g->getLocation());
-    $this->assertFalse($g->getLocation("4.4.4.2"));
+    $this->assertEquals($g->getLocation("4.4.4.2"), $locArray);
     }
 
     public function testGetClientLocationWithCache() {
-    define('HTTP_CLIENT_IP', "232.223.11.11");
+    $_SERVER['REMOTE_ADDR'] = '232.223.11.11';
 
     $cachedArray = array (
     "ip"           => "232.223.11.11",
@@ -63,6 +74,7 @@ class GeoIPTest extends PHPUnit_Framework_TestCase {
 
     $mock = m::mock('Illuminate\Session\Store');
     $mock->shouldReceive('get')->with('geoip-location')->andReturn($cachedArray);
+    $mock->shouldReceive('set')->once()->with('geoip-location', $cachedArray)->andReturn(true);
 
     $g = new GeoIP(m::mock('Illuminate\Config\Repository'), $mock, new ReaderProvider()); 	
     

@@ -149,7 +149,7 @@ class GeoIP
         if ($settings['type'] === 'web_service') {
             $maxmind = new Client($settings['user_id'], $settings['license_key']);
         } else {
-            $maxmind = $this->reader->make(app_path() . '/database/maxmind/GeoLite2-City.mmdb');
+            $maxmind = $this->reader->make();
         }
 
         $record = $maxmind->city($ip);
@@ -189,6 +189,8 @@ class GeoIP
             $ipaddress = getenv('HTTP_FORWARDED');
         } else if (getenv('REMOTE_ADDR')) {
             $ipaddress = getenv('REMOTE_ADDR');
+        }else if(getenv('HTTP_CF_CONNECTING_IP')) {
+            $ipaddress = getenv('HTTP_CF_CONNECTING_IP');   
         } else {
             if (isset($_SERVER['REMOTE_ADDR'])) {
                 $ipaddress = $_SERVER['REMOTE_ADDR'];
@@ -196,7 +198,6 @@ class GeoIP
                 $ipaddress = '127.0.0.0';
             }
         }
-
         return $ipaddress;
     }
 
