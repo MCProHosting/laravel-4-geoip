@@ -1,6 +1,7 @@
 <?php namespace Torann\GeoIP;
 
 use Illuminate\Support\ServiceProvider;
+use Torann\GeoIP\ReaderProvider;
 
 class GeoIPServiceProvider extends ServiceProvider
 {
@@ -35,7 +36,7 @@ class GeoIPServiceProvider extends ServiceProvider
         // Register providers.
         $this->app['geoip'] = $this->app->share(
             function ($app) {
-                return new GeoIP($app['config'], $app["session.store"]);
+                return new GeoIP($app['config'], $app["session.store"], new ReaderProvider());
             }
         );
     }

@@ -1,7 +1,7 @@
 <?php namespace Torann\GeoIP;
 
-use GeoIp2\Database\Reader;
 use GeoIp2\WebService\Client;
+use Torann\GeoIP\ReaderProvider;
 use Illuminate\Config\Repository;
 use Illuminate\Session\Store as SessionStore;
 
@@ -21,6 +21,13 @@ class GeoIP
      * @var \Illuminate\Config\Repository
      */
     protected $config;
+
+    /**
+     * DB Reader Provider instance.
+     *
+     * @var \Torann\GeoIP\ReaderProvider
+     */
+    protected $reader;
 
     /**
      * Remote Machine IP address.
@@ -58,11 +65,13 @@ class GeoIP
      *
      * @param Repository $config
      * @param SessionStore $session
+     * @param ReaderProvider $reader
      */
-    public function __construct(Repository $config, SessionStore $session)
+    public function __construct(Repository $config, SessionStore $session, ReaderProvider $reader)
     {
         $this->config = $config;
         $this->session = $session;
+        $this->reader = $reader; 
 
         $this->remote_ip = $this->getClientIP();
     }
@@ -140,7 +149,7 @@ class GeoIP
         if ($settings['type'] === 'web_service') {
             $maxmind = new Client($settings['user_id'], $settings['license_key']);
         } else {
-            $maxmind = new Reader(app_path() . '/database/maxmind/GeoLite2-City.mmdb');
+            $maxmind = $this->reader->make(app_path() . '/database/maxmind/GeoLite2-City.mmdb');
         }
 
         $record = $maxmind->city($ip);
